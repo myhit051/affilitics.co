@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id        String   @id @default(uuid())
+  name      String
+  plan      String   @default("free")
+  members   Member[]
+  createdAt DateTime @default(now())
+}
+
+model Member {
+  id          String   @id @default(uuid())
+  userId      String
+  workspaceId String
+  role        String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  @@unique([userId, workspaceId])
+}
+
+model ImportJob {
+  id           String   @id @default(uuid())
+  workspaceId  String
+  platform     String
+  filename     String
+  size         Int
+  status       String   @default("queued") // queued|processing|done|failed
+  error        String?
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  createdBy    String
+  createdAt    DateTime @default(now())
+  hash         String?
+  @@index([workspaceId, createdAt])
+}
+
+model ImportError {
+  id        String   @id @default(uuid())
+  jobId     String
+  rowNo     Int
+  field     String?
+  message   String
+  sample    String?
+  createdAt DateTime @default(now())
+  @@index([jobId])
+}
+
+model AffiliateOrder {
+  id           String   @id @default(uuid())
+  workspaceId  String
+  platform     String
+  orderId      String
+  subid        String?
+  amount       Decimal? @db.Decimal(14,2)
+  net          Decimal? @db.Decimal(14,2)
+  commission   Decimal? @db.Decimal(14,2)
+  eventDate    DateTime
+  createdAt    DateTime @default(now())
+  @@unique([workspaceId, platform, orderId])
+  @@index([workspaceId, eventDate])
+}

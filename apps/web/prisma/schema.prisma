@@ -1,0 +1,152 @@
+// Prisma schema for Affilitics import system
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Import Jobs - tracks file upload and processing status
+model ImportJob {
+  id                 String    @id @default(cuid())
+  workspaceId        String    @map("workspace_id")
+  platform           String    // shopee, lazada, tiktok
+  filename           String
+  originalFilename   String?   @map("original_filename")
+  storagePath        String?   @map("storage_path")
+  size               Int
+  status             String    @default("uploaded") // uploaded, validated, processing, completed, failed, validation_failed
+  hash               String    @unique
+  createdBy          String    @map("created_by")
+  
+  // Validation results
+  validationResult   Json?     @map("validation_result")
+  validationSummary  String?   @map("validation_summary")
+  totalRows          Int?      @map("total_rows")
+  validRows          Int?      @map("valid_rows")
+  errorCount         Int?      @map("error_count")
+  
+  // Processing results
+  processedRows      Int?      @map("processed_rows")
+  processingSummary  String?   @map("processing_summary")
+  
+  // Timestamps
+  createdAt          DateTime  @default(now()) @map("created_at")
+  uploadedAt         DateTime? @map("uploaded_at")
+  validatedAt        DateTime? @map("validated_at")
+  processingStartedAt DateTime? @map("processing_started_at")
+  completedAt        DateTime? @map("completed_at")
+  
+  // Relations
+  errors             ImportError[]
+  orders             AffiliateOrder[]
+  
+  @@map("import_jobs")
+  @@index([workspaceId])
+  @@index([status])
+  @@index([platform])
+  @@index([createdAt])
+}
+
+// Import Errors - detailed validation and processing errors
+model ImportError {
+  id           String    @id @default(cuid())
+  jobId        String    @map("job_id")
+  workspaceId  String    @map("workspace_id")
+  rowNumber    Int       @map("row_number")
+  columnName   String?   @map("column_name")
+  fieldName    String?   @map("field_name")
+  errorType    String    @map("error_type") // missing, invalid_type, invalid_format, duplicate, business_rule, unknown
+  errorMessage String    @map("error_message")
+  fieldValue   String?   @map("field_value")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  
+  // Relations
+  job          ImportJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  @@map("import_errors")
+  @@index([jobId])
+  @@index([errorType])
+  @@index([workspaceId])
+}
+
+// Affiliate Orders - processed and validated order data
+model AffiliateOrder {
+  id                String    @id @default(cuid())
+  workspaceId       String    @map("workspace_id")
+  platform          String    // shopee, lazada, tiktok
+  importJobId       String?   @map("import_job_id")
+  
+  // Core order information
+  orderId           String    @map("order_id")
+  productId         String?   @map("product_id")
+  productName       String    @map("product_name")
+  sku               String?
+  category          String?
+  shopName          String?   @map("shop_name")
+  customerId        String?   @map("customer_id")
+  
+  // Financial data
+  quantity          Int?
+  unitPrice         Decimal?  @map("unit_price") @db.Decimal(10, 2)
+  totalAmount       Decimal?  @map("total_amount") @db.Decimal(10, 2)
+  commissionRate    Decimal   @map("commission_rate") @db.Decimal(5, 2)
+  commissionAmount  Decimal   @map("commission_amount") @db.Decimal(10, 2)
+  finalCommission   Decimal?  @map("final_commission") @db.Decimal(10, 2)
+  currency          String    @default("USD")
+  
+  // Status and dates
+  orderStatus       String    @map("order_status")
+  orderDate         DateTime  @map("order_date")
+  clickTime         DateTime? @map("click_time")
+  conversionTime    DateTime? @map("conversion_time")
+  settlementDate    DateTime? @map("settlement_date")
+  
+  // Platform-specific fields
+  videoId           String?   @map("video_id") // TikTok
+  creatorName       String?   @map("creator_name") // TikTok
+  productUrl        String?   @map("product_url") // Lazada
+  country           String?   // Lazada
+  region            String?   // TikTok
+  
+  // Metadata
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  
+  // Relations
+  importJob         ImportJob? @relation(fields: [importJobId], references: [id])
+  
+  @@map("affiliate_orders")
+  @@unique([workspaceId, platform, orderId]) // Prevent duplicates per workspace/platform
+  @@index([workspaceId])
+  @@index([platform])
+  @@index([orderDate])
+  @@index([orderStatus])
+  @@index([importJobId])
+}
+
+// Workspace model (if not exists elsewhere)
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  ownerId     String   @map("owner_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@map("workspaces")
+}
+
+// User model (basic, if not exists elsewhere)
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@map("users")
+}

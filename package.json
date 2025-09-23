@@ -1,0 +1,35 @@
+{
+  "name": "affilitics",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --parallel --recursive dev",
+    "build": "pnpm --recursive build",
+    "lint": "pnpm --recursive lint",
+    "type-check": "pnpm --recursive type-check",
+    "db:generate": "pnpm --filter=db generate",
+    "db:push": "pnpm --filter=db push",
+    "db:migrate": "pnpm --filter=db migrate",
+    "db:test": "node test-db.js",
+    "clean": "pnpm --recursive clean",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@10.16.1",
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}

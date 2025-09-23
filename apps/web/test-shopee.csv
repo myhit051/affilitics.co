@@ -1,0 +1,3 @@
+Order ID,Product Name,Commission Rate,Commission Amount,Order Status,Order Date,Product ID,SKU,Category,Shop Name,Customer ID,Quantity,Unit Price,Total Amount,Currency,Click Time,Conversion Time
+SH123456789,Wireless Bluetooth Headphones,5.5,1.65,Delivered,2024-09-16,PROD001,WBH-001,Electronics,TechStore,CUST001,1,29.99,29.99,USD,2024-09-16T10:00:00Z,2024-09-16T10:05:00Z
+SH987654321,Smartphone Case,8.0,2.00,Confirmed,2024-09-17,PROD002,SC-002,Accessories,MobileWorld,CUST002,2,12.50,25.00,USD,2024-09-17T11:00:00Z,2024-09-17T11:10:00Z

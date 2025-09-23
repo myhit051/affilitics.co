@@ -1,0 +1,345 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from './auth-provider'
+import { RegisterFormData, registerSchema, validateFormData } from '@/lib/auth/validation'
+import { checkRateLimit, sanitizeAuthInput } from '@/lib/auth/client-utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Checkbox } from '@/components/ui/checkbox'
+import { cn } from '@/lib/utils'
+import * as React from 'react'
+
+// Custom hook for mobile detection
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = React.useState(false)
+  
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+  
+  return isMobile
+}
+
+interface FormErrors {
+  [key: string]: string[]
+}
+
+export function RegisterForm() {
+  const [formData, setFormData] = useState<RegisterFormData>({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    fullName: '',
+    workspaceName: '',
+    acceptTerms: false
+  })
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [generalError, setGeneralError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const isMobile = useIsMobile()
+
+  const router = useRouter()
+  const { signUp } = useAuth()
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target
+    
+    // Security: Clear previous errors
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: []
+      }))
+    }
+    setGeneralError(null)
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setGeneralError(null)
+    setSuccessMessage(null)
+
+    try {
+      // Security: Rate limiting check
+      const clientIP = 'client-ip' // In a real app, get from headers
+      checkRateLimit(clientIP, 3, 15 * 60 * 1000) // 3 attempts per 15 minutes
+
+      // Security: Validate form data
+      const validation = validateFormData(registerSchema, formData)
+      if (!validation.success) {
+        setErrors(validation.errors)
+        return
+      }
+
+      // Security: Sanitize inputs
+      const sanitizedData = {
+        email: sanitizeAuthInput(validation.data.email),
+        password: validation.data.password,
+        fullName: sanitizeAuthInput(validation.data.fullName),
+        workspaceName: sanitizeAuthInput(validation.data.workspaceName)
+      }
+
+      // Attempt sign up
+      const { error } = await signUp(
+        sanitizedData.email,
+        sanitizedData.password,
+        {
+          full_name: sanitizedData.fullName,
+          workspace_name: sanitizedData.workspaceName
+        }
+      )
+
+      if (error) {
+        // Security: Handle specific error cases
+        switch (error.message) {
+          case 'User already registered':
+            setGeneralError('An account with this email already exists. Try signing in instead.')
+            break
+          case 'Signup requires a valid password':
+            setErrors({ password: ['Password does not meet security requirements'] })
+            break
+          case 'Invalid email':
+            setErrors({ email: ['Please enter a valid email address'] })
+            break
+          case 'Password should be at least 6 characters':
+            setErrors({ password: ['Password must be at least 12 characters long'] })
+            break
+          default:
+            setGeneralError('An error occurred during registration. Please try again.')
+        }
+        return
+      }
+
+      // Success
+      setSuccessMessage(
+        'Registration successful! Please check your email for a verification link before signing in.'
+      )
+      
+      // Clear form
+      setFormData({
+        email: '',
+        password: '',
+        confirmPassword: '',
+        fullName: '',
+        workspaceName: '',
+        acceptTerms: false
+      })
+
+      // Redirect to login after 3 seconds
+      setTimeout(() => {
+        router.push('/login')
+      }, 3000)
+
+    } catch (error: any) {
+      console.error('Registration error:', error)
+      if (error.code === 'RATE_LIMITED') {
+        setGeneralError(error.message)
+      } else {
+        setGeneralError('An unexpected error occurred. Please try again.')
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (successMessage) {
+    return (
+      <div className="text-center space-y-4">
+        <Alert variant="default" className="border-green-200 bg-green-50">
+          <div className="flex items-center">
+            <svg className="h-5 w-5 text-green-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <AlertDescription className="text-green-800 font-medium">
+              {successMessage}
+            </AlertDescription>
+          </div>
+        </Alert>
+        <p className="text-slate-600">Redirecting to sign in...</p>
+        <div className="flex justify-center">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className={cn(
+      "space-y-5",
+      isMobile && "space-y-6"
+    )} noValidate>
+      {/* Security: Show general errors */}
+      {generalError && (
+        <Alert variant="destructive">
+          <AlertDescription>{generalError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Full Name field */}
+      <Input
+        type="text"
+        id="fullName"
+        name="fullName"
+        label="Full Name"
+        value={formData.fullName}
+        onChange={handleInputChange}
+        disabled={isLoading}
+        placeholder="Enter your full name"
+        autoComplete="name"
+        required
+        error={errors.fullName?.[0]}
+        mobileOptimized={true}
+        variant={errors.fullName?.length ? "destructive" : "default"}
+      />
+
+      {/* Email field */}
+      <Input
+        type="email"
+        id="email"
+        name="email"
+        label="Email address"
+        value={formData.email}
+        onChange={handleInputChange}
+        disabled={isLoading}
+        placeholder="Enter your email"
+        autoComplete="email"
+        required
+        error={errors.email?.[0]}
+        mobileOptimized={true}
+        variant={errors.email?.length ? "destructive" : "default"}
+      />
+
+      {/* Password field */}
+      <Input
+        type="password"
+        id="password"
+        name="password"
+        label="Password"
+        value={formData.password}
+        onChange={handleInputChange}
+        disabled={isLoading}
+        placeholder="Create a strong password"
+        autoComplete="new-password"
+        required
+        error={errors.password?.[0]}
+        helperText="Must be at least 12 characters with uppercase, lowercase, number, and special character"
+        mobileOptimized={true}
+        variant={errors.password?.length ? "destructive" : "default"}
+      />
+
+      {/* Confirm Password field */}
+      <Input
+        type="password"
+        id="confirmPassword"
+        name="confirmPassword"
+        label="Confirm Password"
+        value={formData.confirmPassword}
+        onChange={handleInputChange}
+        disabled={isLoading}
+        placeholder="Confirm your password"
+        autoComplete="new-password"
+        required
+        error={errors.confirmPassword?.[0]}
+        mobileOptimized={true}
+        variant={errors.confirmPassword?.length ? "destructive" : "default"}
+      />
+
+      {/* Workspace Name field */}
+      <Input
+        type="text"
+        id="workspaceName"
+        name="workspaceName"
+        label="Workspace Name"
+        value={formData.workspaceName}
+        onChange={handleInputChange}
+        disabled={isLoading}
+        placeholder="e.g., My Company"
+        required
+        error={errors.workspaceName?.[0]}
+        helperText="This will be your organization name in Affilitics"
+        mobileOptimized={true}
+        variant={errors.workspaceName?.length ? "destructive" : "default"}
+      />
+
+      {/* Terms acceptance */}
+      <div className="space-y-2">
+        <div className={cn(
+          "flex items-start gap-3 touch-manipulation",
+          isMobile && "gap-4"
+        )}>
+          <input
+            type="checkbox"
+            id="acceptTerms"
+            name="acceptTerms"
+            checked={formData.acceptTerms}
+            onChange={handleInputChange}
+            disabled={isLoading}
+            className={cn(
+              "text-blue-600 focus:ring-blue-500 border-slate-300 rounded touch-manipulation",
+              isMobile ? "h-5 w-5 mt-0.5" : "h-4 w-4 mt-1"
+            )}
+            required
+            aria-invalid={errors.acceptTerms?.length ? 'true' : 'false'}
+          />
+          <label 
+            htmlFor="acceptTerms" 
+            className={cn(
+              "block text-slate-700 leading-relaxed cursor-pointer touch-manipulation",
+              isMobile ? "text-base" : "text-sm"
+            )}
+          >
+            I agree to the{' '}
+            <a 
+              href="/terms" 
+              className="text-blue-600 hover:text-blue-500 underline touch-manipulation" 
+              target="_blank"
+            >
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a 
+              href="/privacy" 
+              className="text-blue-600 hover:text-blue-500 underline touch-manipulation" 
+              target="_blank"
+            >
+              Privacy Policy
+            </a>
+          </label>
+        </div>
+        {errors.acceptTerms?.length > 0 && (
+          <div className="text-sm text-red-600 ml-8">
+            {errors.acceptTerms[0]}
+          </div>
+        )}
+      </div>
+
+      {/* Submit button */}
+      <Button
+        type="submit"
+        disabled={isLoading}
+        loading={isLoading}
+        className="w-full"
+        size={isMobile ? "mobile-default" : "default"}
+        mobileOptimized={true}
+      >
+        {isLoading ? 'Creating account...' : 'Create account'}
+      </Button>
+    </form>
+  )
+}
