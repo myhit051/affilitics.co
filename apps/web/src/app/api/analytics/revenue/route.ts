@@ -45,15 +45,15 @@ export async function GET(request: NextRequest) {
     // Group orders by date and calculate metrics
     const revenueData = dateRange.map(date => {
       const dayStart = startOfDay(date)
-      const dayOrders = orders.filter(order => {
+      const dayOrders = orders.filter((order: any) => {
         const orderDate = startOfDay(new Date(order.eventDate))
         return orderDate.getTime() === dayStart.getTime()
       })
 
-      const revenue = dayOrders.reduce((sum, order) => 
+      const revenue = dayOrders.reduce((sum: number, order: any) => 
         sum + (order.amount ? Number(order.amount) : 0), 0
       )
-      const commission = dayOrders.reduce((sum, order) => 
+      const commission = dayOrders.reduce((sum: number, order: any) => 
         sum + (order.commission ? Number(order.commission) : 0), 0
       )
       const orderCount = dayOrders.length

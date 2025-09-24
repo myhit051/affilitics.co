@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Calculate total revenue for percentage calculation
-    const totalRevenue = currentPeriodOrders.reduce((sum, platform) => 
+    const totalRevenue = currentPeriodOrders.reduce((sum: number, platform: any) => 
       sum + (platform._sum.amount ? Number(platform._sum.amount) : 0), 0
     )
 
@@ -74,13 +74,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Prepare response data
-    const platformData = currentPeriodOrders.map(platform => {
+    const platformData = currentPeriodOrders.map((platform: any) => {
       const revenue = platform._sum.amount ? Number(platform._sum.amount) : 0
       const commission = platform._sum.commission ? Number(platform._sum.commission) : 0
       const orders = platform._count.id
 
       // Find previous period data for comparison
-      const previousData = previousPeriodOrders.find(p => p.platform === platform.platform)
+      const previousData = previousPeriodOrders.find((p: any) => p.platform === platform.platform)
       const previousRevenue = previousData?._sum.amount ? Number(previousData._sum.amount) : 0
       
       // Calculate change percentage
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Sort by revenue descending
-    platformData.sort((a, b) => b.revenue - a.revenue)
+    platformData.sort((a: any, b: any) => b.revenue - a.revenue)
 
     return NextResponse.json(platformData)
   } catch (error) {

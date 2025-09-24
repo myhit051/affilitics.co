@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { getAuthContext } from '@/lib/auth'
-import { prisma, Prisma } from '@aff/db'
+import { prisma } from '@aff/db'
 import { createImportErrorService, ERROR_SEVERITY, getErrorUIConfig } from '@aff/db'
 
 export const runtime = 'nodejs'
@@ -95,12 +95,12 @@ export async function GET(req: NextRequest) {
       SELECT COUNT(*) as count
       FROM import_errors 
       WHERE job_id = ${jobId}::uuid
-        ${errorType ? Prisma.sql`AND error_type = ${errorType}` : Prisma.sql``}
-        ${severity ? Prisma.sql`AND severity = ${severity}` : Prisma.sql``}
-        ${category ? Prisma.sql`AND category = ${category}` : Prisma.sql``}
-        ${resolved === 'true' ? Prisma.sql`AND resolved_at IS NOT NULL` : Prisma.sql``}
-        ${resolved === 'false' ? Prisma.sql`AND resolved_at IS NULL` : Prisma.sql``}
-        ${search ? Prisma.sql`AND (message ILIKE ${'%' + search + '%'} OR sample ILIKE ${'%' + search + '%'} OR field ILIKE ${'%' + search + '%'})` : Prisma.sql``}
+        ${errorType ? `AND error_type = ${errorType}` : ``}
+        ${severity ? `AND severity = ${severity}` : ``}
+        ${category ? `AND category = ${category}` : ``}
+        ${resolved === 'true' ? `AND resolved_at IS NOT NULL` : ``}
+        ${resolved === 'false' ? `AND resolved_at IS NULL` : ``}
+        ${search ? `AND (message ILIKE ${'%' + search + '%'} OR sample ILIKE ${'%' + search + '%'} OR field ILIKE ${'%' + search + '%'})` : ``}
     `
 
     // Calculate pagination
@@ -137,16 +137,16 @@ export async function GET(req: NextRequest) {
         id, row_no, field, message, sample, error_type,
         severity, category, recovery_strategy, retry_count, max_retries,
         resolved_at, resolution, dismissed, created_at
-        ${includeContext ? Prisma.sql`, stack_trace, additional_context` : Prisma.sql``}
+        ${includeContext ? `, stack_trace, additional_context` : ``}
       FROM import_errors 
       WHERE job_id = ${jobId}::uuid
-        ${errorType ? Prisma.sql`AND error_type = ${errorType}` : Prisma.sql``}
-        ${severity ? Prisma.sql`AND severity = ${severity}` : Prisma.sql``}
-        ${category ? Prisma.sql`AND category = ${category}` : Prisma.sql``}
-        ${resolved === 'true' ? Prisma.sql`AND resolved_at IS NOT NULL` : Prisma.sql``}
-        ${resolved === 'false' ? Prisma.sql`AND resolved_at IS NULL` : Prisma.sql``}
-        ${search ? Prisma.sql`AND (message ILIKE ${'%' + search + '%'} OR sample ILIKE ${'%' + search + '%'} OR field ILIKE ${'%' + search + '%'})` : Prisma.sql``}
-      ORDER BY ${Prisma.raw(sortField + ' ' + order)}, created_at DESC
+        ${errorType ? `AND error_type = ${errorType}` : ``}
+        ${severity ? `AND severity = ${severity}` : ``}
+        ${category ? `AND category = ${category}` : ``}
+        ${resolved === 'true' ? `AND resolved_at IS NOT NULL` : ``}
+        ${resolved === 'false' ? `AND resolved_at IS NULL` : ``}
+        ${search ? `AND (message ILIKE ${'%' + search + '%'} OR sample ILIKE ${'%' + search + '%'} OR field ILIKE ${'%' + search + '%'})` : ``}
+      ORDER BY ${sortField} ${order}, created_at DESC
       LIMIT ${limit} OFFSET ${offset}
     `
 
@@ -182,7 +182,7 @@ export async function GET(req: NextRequest) {
     `
     
     // Group samples by error type with enhanced information
-    const errorSamples = samplesResult.reduce((acc, row) => {
+    const errorSamples = samplesResult.reduce((acc: any, row: any) => {
       if (!acc[row.error_type]) {
         acc[row.error_type] = []
       }
@@ -206,7 +206,7 @@ export async function GET(req: NextRequest) {
         filename: job.filename,
         platform: job.platform
       },
-      errors: errorsResult.map(error => ({
+      errors: errorsResult.map((error: any) => ({
         id: error.id,
         row: error.row_no,
         field: error.field,
@@ -385,7 +385,7 @@ export async function POST(req: NextRequest) {
         ]
         let csvContent = headers.join(',') + '\n'
 
-        exportResult.forEach(error => {
+        exportResult.forEach((error: any) => {
           const row = [
             error.row_no,
             error.field || '',

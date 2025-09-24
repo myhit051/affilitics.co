@@ -56,19 +56,19 @@ export const GET = withAuth(async (request: NextRequest, { workspaceId }) => {
     })
 
     // Calculate current period metrics
-    const totalRevenue = currentPeriodOrders.reduce((sum, order) => 
+    const totalRevenue = currentPeriodOrders.reduce((sum: number, order: any) => 
       sum + (order.amount ? Number(order.amount) : 0), 0
     )
-    const totalCommission = currentPeriodOrders.reduce((sum, order) => 
+    const totalCommission = currentPeriodOrders.reduce((sum: number, order: any) => 
       sum + (order.commission ? Number(order.commission) : 0), 0
     )
     const totalOrders = currentPeriodOrders.length
 
     // Calculate previous period metrics
-    const previousRevenue = previousPeriodOrders.reduce((sum, order) => 
+    const previousRevenue = previousPeriodOrders.reduce((sum: number, order: any) => 
       sum + (order.amount ? Number(order.amount) : 0), 0
     )
-    const previousCommission = previousPeriodOrders.reduce((sum, order) => 
+    const previousCommission = previousPeriodOrders.reduce((sum: number, order: any) => 
       sum + (order.commission ? Number(order.commission) : 0), 0
     )
     const previousOrders = previousPeriodOrders.length

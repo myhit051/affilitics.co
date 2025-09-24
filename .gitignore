@@ -97,3 +97,4 @@ temp/
 *.bak
 test-setup.ts.bak
 node_modules
+.vercel

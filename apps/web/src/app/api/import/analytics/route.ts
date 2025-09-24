@@ -206,9 +206,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Calculate data quality score
-    const totalErrors = (trends as any[]).reduce((sum, t) => sum + Number(t.count), 0)
-    const totalJobs = (performanceMetrics as any[]).reduce((sum, p) => sum + Number(p.total_jobs), 0)
-    const criticalErrorRate = (trends as any[]).filter(t => t.severity === 'critical').reduce((sum, t) => sum + Number(t.count), 0) / Math.max(totalErrors, 1)
+    const totalErrors = (trends as any[]).reduce((sum: any, t) => sum + Number(t.count), 0)
+    const totalJobs = (performanceMetrics as any[]).reduce((sum: any, p) => sum + Number(p.total_jobs), 0)
+    const criticalErrorRate = (trends as any[]).filter((t: any) => t.severity === 'critical').reduce((sum: any, t) => sum + Number(t.count), 0) / Math.max(totalErrors, 1)
     
     insights.dataQuality.score = Math.max(0, Math.min(100, 100 - (totalErrors / Math.max(totalJobs, 1)) * 10 - criticalErrorRate * 50))
     
@@ -223,8 +223,8 @@ export async function GET(req: NextRequest) {
     }
 
     // Calculate reliability score
-    const successRate = (performanceMetrics as any[]).reduce((sum, p) => sum + Number(p.successful_jobs), 0) / Math.max(totalJobs, 1)
-    const avgRetries = (performanceMetrics as any[]).reduce((sum, p) => sum + Number(p.avg_retries_per_job || 0), 0) / Math.max((performanceMetrics as any[]).length, 1)
+    const successRate = (performanceMetrics as any[]).reduce((sum: any, p) => sum + Number(p.successful_jobs), 0) / Math.max(totalJobs, 1)
+    const avgRetries = (performanceMetrics as any[]).reduce((sum: any, p) => sum + Number(p.avg_retries_per_job || 0), 0) / Math.max((performanceMetrics as any[]).length, 1)
     
     insights.reliability.score = Math.round(successRate * 100 - avgRetries * 10)
     
@@ -234,7 +234,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Calculate efficiency score  
-    const avgProcessingTime = (performanceMetrics as any[]).reduce((sum, p) => sum + Number(p.avg_processing_minutes || 0), 0) / Math.max((performanceMetrics as any[]).length, 1)
+    const avgProcessingTime = (performanceMetrics as any[]).reduce((sum: any, p) => sum + Number(p.avg_processing_minutes || 0), 0) / Math.max((performanceMetrics as any[]).length, 1)
     const retryRate = avgRetries / Math.max(totalJobs, 1)
     
     insights.efficiency.score = Math.max(0, Math.min(100, 100 - avgProcessingTime - retryRate * 20))

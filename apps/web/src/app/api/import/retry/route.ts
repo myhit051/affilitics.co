@@ -223,7 +223,7 @@ export async function POST(req: NextRequest) {
       timestamp: new Date()
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Validate status transition
       try {
         validateStatusTransition(
@@ -256,7 +256,7 @@ export async function POST(req: NextRequest) {
 
       // Mark retryable errors for retry
       if (retryableErrors.length > 0) {
-        const retryPromises = retryableErrors.map(error => 
+        const retryPromises = retryableErrors.map((error: any) => 
           errorService.markForRetry(error.id!)
         )
         await Promise.all(retryPromises)

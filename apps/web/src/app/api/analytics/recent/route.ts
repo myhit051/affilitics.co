@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Transform data for frontend
-    const formattedOrders = recentOrders.map((order, index) => ({
+    const formattedOrders = recentOrders.map((order: any, index: number) => ({
       id: order.id,
       orderId: order.orderId,
       platform: order.platform,
@@ -94,8 +94,8 @@ export async function POST(request: NextRequest) {
 
     // Get error counts for failed jobs
     const failedJobIds = importJobs
-      .filter(job => job.status === 'failed')
-      .map(job => job.id)
+      .filter((job: any) => job.status === 'failed')
+      .map((job: any) => job.id)
 
     const errorCounts = await prisma.importError.groupBy({
       by: ['jobId'],
@@ -110,8 +110,8 @@ export async function POST(request: NextRequest) {
     })
 
     // Transform data for frontend
-    const formattedJobs = importJobs.map(job => {
-      const errorCount = errorCounts.find(e => e.jobId === job.id)?._count.id || 0
+    const formattedJobs = importJobs.map((job: any) => {
+      const errorCount = errorCounts.find((e: any) => e.jobId === job.id)?._count.id || 0
       
       return {
         id: job.id,

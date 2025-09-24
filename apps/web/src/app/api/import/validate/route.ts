@@ -207,9 +207,9 @@ export const POST = withWorkspaceValidation(
 
     // Generate enhanced validation report
     const validationReport = {
-      isValid: parseResult.errors.filter(e => e.severity === 'error').length === 0,
-      criticalErrors: parseResult.errors.filter(e => e.severity === 'error'),
-      warnings: parseResult.warnings || parseResult.errors.filter(e => e.severity === 'warning'),
+      isValid: parseResult.errors.filter((e: any) => e.severity === 'error').length === 0,
+      criticalErrors: parseResult.errors.filter((e: any) => e.severity === 'error'),
+      warnings: parseResult.warnings || parseResult.errors.filter((e: any) => e.severity === 'warning'),
       summary: `Processed ${parseResult.summary.totalRows} rows. ${parseResult.summary.validRows} valid, ${parseResult.summary.invalidRows} invalid.`,
       stats: {
         processingTime: parseResult.summary.processingTime,
@@ -303,7 +303,7 @@ export const POST = withWorkspaceValidation(
         bySeverity: {
           errors: validationReport.criticalErrors.length,
           warnings: validationReport.warnings.length,
-          info: allIssues.filter(i => i.severity === 'info').length
+          info: allIssues.filter((i: any) => i.severity === 'info').length
         },
         byCategory: {}
       },
@@ -322,7 +322,7 @@ export const POST = withWorkspaceValidation(
 
     // Execute helper functions to populate response data
     const categorizeIssues = (issues: any[]) => {
-      return issues.reduce((acc, issue) => {
+      return issues.reduce((acc: any, issue) => {
         const category = getIssueCategory(issue)
         acc[category] = (acc[category] || 0) + 1
         return acc

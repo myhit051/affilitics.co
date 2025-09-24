@@ -220,7 +220,7 @@ function analyzeDataQuality(validationResult: any) {
 
   const totalFields = data.length * Object.keys(data[0]).length
   const filledFields = data.reduce((count: number, row: any) => {
-    return count + Object.values(row).filter(value => 
+    return count + Object.values(row).filter((value: any) => 
       value !== null && value !== undefined && String(value).trim() !== ''
     ).length
   }, 0)
@@ -421,7 +421,7 @@ function summarizeErrors(errors: any[]): any {
 }
 
 function categorizeBusinessRuleViolations(errors: any[]): any {
-  return errors.reduce((categories, error) => {
+  return errors.reduce((categories: any, error) => {
     const category = error.field?.toLowerCase().includes('commission') ? 'commission' :
                    error.field?.toLowerCase().includes('date') ? 'date' :
                    error.field?.toLowerCase().includes('status') ? 'status' : 'other'
@@ -431,7 +431,7 @@ function categorizeBusinessRuleViolations(errors: any[]): any {
 }
 
 function calculateComplianceRate(errors: any[], category: string): number {
-  const categoryErrors = errors.filter(e => 
+  const categoryErrors = errors.filter((e: any) => 
     e.field?.toLowerCase().includes(category) || 
     e.message?.toLowerCase().includes(category)
   )

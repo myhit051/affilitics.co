@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
 
     return new Response(JSON.stringify({
       success: true,
-      jobs: jobs.map(job => ({
+      jobs: jobs.map((job: any) => ({
         id: job.id,
         platform: job.platform,
         filename: job.filename,
@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
         }
       })),
       statistics: {
-        statusBreakdown: statusStats.map(stat => ({
+        statusBreakdown: statusStats.map((stat: any) => ({
           status: stat.status,
           count: stat._count.id,
           totalRows: 0,
