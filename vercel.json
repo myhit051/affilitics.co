@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pnpm db:generate && cd apps/web && pnpm build",
+  "buildCommand": "pnpm db:generate && pnpm --filter=@aff/db build && cd apps/web && pnpm build",
   "devCommand": "cd apps/web && pnpm dev",
   "installCommand": "pnpm install",
   "outputDirectory": "apps/web/.next",
