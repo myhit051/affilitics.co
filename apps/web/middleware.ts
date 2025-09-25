@@ -107,26 +107,28 @@ export async function middleware(request: NextRequest) {
   const clientIP = getClientIP(request)
 
   try {
+    // Security: Add basic security headers first
+    response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('X-XSS-Protection', '1; mode=block')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+    
+    const cspHeader = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https:",
+      "font-src 'self'",
+      "connect-src 'self' https://*.supabase.co",
+      "frame-ancestors 'none'"
+    ].join('; ')
+    
+    response.headers.set('Content-Security-Policy', cspHeader)
+
     // Security: Skip auth checks for public routes FIRST
     if (isPublicRoute(pathname)) {
-      // Security: Add security headers to public routes too
-      response.headers.set('X-Frame-Options', 'DENY')
-      response.headers.set('X-Content-Type-Options', 'nosniff')
-      response.headers.set('X-XSS-Protection', '1; mode=block')
-      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-      response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-      
-      const cspHeader = [
-        "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-        "style-src 'self' 'unsafe-inline'",
-        "img-src 'self' data: https:",
-        "font-src 'self'",
-        "connect-src 'self' https://*.supabase.co",
-        "frame-ancestors 'none'"
-      ].join('; ')
-      
-      response.headers.set('Content-Security-Policy', cspHeader)
+      console.log(`Public route accessed: ${pathname}`)
       return response
     }
 
