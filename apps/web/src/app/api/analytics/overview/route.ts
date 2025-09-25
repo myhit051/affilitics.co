@@ -3,6 +3,9 @@ import { prisma } from '@aff/db'
 import { startOfDay, subDays, format } from 'date-fns'
 import { withAuth } from '@/lib/auth/production-auth'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export const GET = withAuth(async (request: NextRequest, { workspaceId }) => {
   try {
     const { searchParams } = new URL(request.url)

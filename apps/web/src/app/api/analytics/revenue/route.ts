@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 import { prisma } from '@aff/db'
 import { startOfDay, subDays, format, eachDayOfInterval } from 'date-fns'
 

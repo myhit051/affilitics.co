@@ -6,6 +6,11 @@ const protectedRoutes = {
   // Public routes that don't require authentication
   public: [
     '/',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/verify',
     '/auth/login',
     '/auth/register',
     '/auth/forgot-password',
@@ -152,7 +157,7 @@ export async function middleware(request: NextRequest) {
       
       // Redirect to login with callback URL
       const callbackUrl = encodeURIComponent(request.url)
-      const loginUrl = new URL('/auth/login', request.url)
+      const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('callbackUrl', callbackUrl)
       
       return NextResponse.redirect(loginUrl)
@@ -217,7 +222,7 @@ export async function middleware(request: NextRequest) {
     console.error('Middleware error:', error)
     
     // Security: In case of any error, fail securely by redirecting to login
-    const loginUrl = new URL('/auth/login', request.url)
+    const loginUrl = new URL('/login', request.url)
     return NextResponse.redirect(loginUrl)
   }
 }

@@ -1,3 +1,7 @@
+// Force dynamic rendering to prevent build-time static generation issues
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/components/auth'

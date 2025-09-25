@@ -10,7 +10,7 @@
     "checkJs": false,
     "jsx": "preserve",
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "isolatedModules": true,
     "strict": true,
     "noUnusedLocals": false,
@@ -19,6 +19,7 @@
     "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "incremental": true,
     "outDir": "./dist",
     "rootDir": "./src"
   },

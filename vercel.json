@@ -1,8 +1,21 @@
 {
   "version": 2,
-  "buildCommand": "pnpm db:generate && pnpm --filter=@aff/db build && cd apps/web && pnpm build",
+  "buildCommand": "pnpm run build:production",
   "devCommand": "cd apps/web && pnpm dev",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "apps/web/.next",
-  "framework": null
+  "framework": null,
+  "env": {
+    "PNPM_FLAGS": "--frozen-lockfile",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NODE_OPTIONS": "--max_old_space_size=4096"
+  },
+  "build": {
+    "env": {
+      "NODE_VERSION": "20",
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "NODE_OPTIONS": "--max_old_space_size=4096"
+    }
+  },
+  "crons": []
 }
