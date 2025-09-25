@@ -4,7 +4,7 @@
   "devCommand": "cd apps/web && pnpm dev",
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "apps/web/.next",
-  "framework": null,
+  "framework": "nextjs",
   "env": {
     "PNPM_FLAGS": "--frozen-lockfile",
     "NEXT_TELEMETRY_DISABLED": "1",
