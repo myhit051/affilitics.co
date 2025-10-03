@@ -1,3 +1,6 @@
+import { config } from 'dotenv'
+// Load .env from project root
+config({ path: '../../.env' })
 import { createClient } from '@supabase/supabase-js'
 import { Pool } from 'pg'
 import { parse } from 'csv-parse'

@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  title: Affilitics Error Handling API
+  version: 1.0.0
+  description: Enhanced error handling and reporting endpoints
+
+paths:
+  /api/errors/report:
+    post:
+      summary: Report application error
+      description: Submit error report for tracking and resolution
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorReport'
+      responses:
+        '201':
+          description: Error reported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorId:
+                    type: string
+                  status:
+                    type: string
+                    enum: [reported, investigating, resolved]
+
+  /api/jobs/{jobId}/retry:
+    post:
+      summary: Retry failed job
+      description: Attempt to retry a failed import job
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job retry initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: string
+                  retryCount:
+                    type: integer
+                  status:
+                    type: string
+                    enum: [retry_queued, retry_failed, max_retries_exceeded]
+        '400':
+          description: Cannot retry job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/jobs/{jobId}/status:
+    get:
+      summary: Get detailed job status
+      description: Retrieve comprehensive status including error details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job status with error details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatus'
+
+components:
+  schemas:
+    ErrorReport:
+      type: object
+      required:
+        - errorType
+        - message
+      properties:
+        errorType:
+          type: string
+          enum: [validation, processing, system, network]
+        message:
+          type: string
+        stackTrace:
+          type: string
+        context:
+          type: object
+          additionalProperties: true
+        userAgent:
+          type: string
+        url:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+        timestamp:
+          type: string
+          format: date-time
+
+    JobStatus:
+      type: object
+      properties:
+        jobId:
+          type: string
+        status:
+          type: string
+          enum: [queued, processing, completed, failed, retry_queued]
+        progress:
+          type: number
+          minimum: 0
+          maximum: 100
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobError'
+        retryCount:
+          type: integer
+        maxRetries:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    JobError:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+        field:
+          type: string
+        line:
+          type: integer
+        severity:
+          type: string
+          enum: [warning, error, critical]
+        suggestion:
+          type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

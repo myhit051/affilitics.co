@@ -1,0 +1,160 @@
+openapi: 3.0.0
+info:
+  title: Affilitics Health Monitoring API
+  version: 1.0.0
+  description: Production readiness health monitoring and metrics endpoints
+
+paths:
+  /api/health:
+    get:
+      summary: System health check
+      description: Returns overall system health status
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                  components:
+                    type: object
+                    properties:
+                      database:
+                        $ref: '#/components/schemas/ComponentStatus'
+                      worker:
+                        $ref: '#/components/schemas/ComponentStatus'
+                      storage:
+                        $ref: '#/components/schemas/ComponentStatus'
+
+  /api/health/worker:
+    get:
+      summary: Worker service health
+      description: Detailed worker service status and metrics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Worker status information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [idle, processing, error, offline]
+                  activeJobs:
+                    type: integer
+                  queueLength:
+                    type: integer
+                  lastProcessed:
+                    type: string
+                    format: date-time
+                  performance:
+                    $ref: '#/components/schemas/PerformanceMetrics'
+
+  /api/metrics/performance:
+    get:
+      summary: System performance metrics
+      description: Retrieve performance metrics for monitoring
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: timeRange
+          in: query
+          schema:
+            type: string
+            enum: [1h, 24h, 7d, 30d]
+            default: 24h
+      responses:
+        '200':
+          description: Performance metrics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csvProcessing:
+                    $ref: '#/components/schemas/CSVMetrics'
+                  apiPerformance:
+                    $ref: '#/components/schemas/APIMetrics'
+                  systemResources:
+                    $ref: '#/components/schemas/ResourceMetrics'
+
+components:
+  schemas:
+    ComponentStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        lastCheck:
+          type: string
+          format: date-time
+        responseTime:
+          type: number
+          description: Response time in milliseconds
+        errorRate:
+          type: number
+          description: Error rate percentage
+
+    PerformanceMetrics:
+      type: object
+      properties:
+        averageProcessingTime:
+          type: number
+          description: Average processing time in seconds
+        successRate:
+          type: number
+          description: Success rate percentage
+        throughput:
+          type: number
+          description: Jobs processed per hour
+
+    CSVMetrics:
+      type: object
+      properties:
+        totalProcessed:
+          type: integer
+        successRate:
+          type: number
+        averageFileSize:
+          type: number
+        averageProcessingTime:
+          type: number
+
+    APIMetrics:
+      type: object
+      properties:
+        requestCount:
+          type: integer
+        averageResponseTime:
+          type: number
+        errorRate:
+          type: number
+        p95ResponseTime:
+          type: number
+
+    ResourceMetrics:
+      type: object
+      properties:
+        memoryUsage:
+          type: number
+        cpuUsage:
+          type: number
+        storageUsage:
+          type: number
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
