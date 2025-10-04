@@ -1,0 +1,55 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Next.js
+.next
+out
+build
+dist
+
+# Testing
+coverage
+.nyc_output
+**/__tests__/**
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+
+# Environment
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.github
+
+# Documentation
+*.md
+docs
+CHANGELOG.md
+README.md
+
+# Vercel
+.vercel
+
+# Misc
+.turbo
+.cache
+tmp
+temp

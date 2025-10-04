@@ -1,44 +1,88 @@
 version: "3.9"
-services:
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: affilitics
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
+services:
+  # Web Application (Next.js)
   web:
-    build: ./apps/web
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web-runner
+    container_name: affilitics-web
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
     environment:
+      # Next.js
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_TELEMETRY_DISABLED=1
+
+      # Supabase
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - SUPABASE_SERVICE_ROLE=${SUPABASE_SERVICE_ROLE}
-      - DATABASE_URL=${DATABASE_URL}
       - SUPABASE_STORAGE_BUCKET=${SUPABASE_STORAGE_BUCKET}
-      - APP_ORIGIN=${APP_ORIGIN}
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-      
-  worker:
-    build: ./apps/worker
-    environment:
+
+      # Database
       - DATABASE_URL=${DATABASE_URL}
+
+      # App Config
+      - APP_ORIGIN=${APP_ORIGIN:-http://localhost:3000}
+
+      # Monitoring
+      - ENABLE_METRICS=${ENABLE_METRICS:-true}
+      - ERROR_REPORTING=${ERROR_REPORTING:-true}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - ALERT_WEBHOOKS=${ALERT_WEBHOOKS}
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - affilitics-network
+
+  # Worker Service (CSV Processing)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker-runner
+    container_name: affilitics-worker
+    restart: unless-stopped
+    environment:
+      # Node.js
+      - NODE_ENV=production
+
+      # Supabase
       - SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - SUPABASE_SERVICE_ROLE=${SUPABASE_SERVICE_ROLE}
       - SUPABASE_STORAGE_BUCKET=${SUPABASE_STORAGE_BUCKET}
-    depends_on:
-      - db
 
-volumes:
-  postgres_data:
+      # Database
+      - DATABASE_URL=${DATABASE_URL}
+
+      # Worker Config
+      - MAX_CONCURRENT_JOBS=${MAX_CONCURRENT_JOBS:-10}
+      - MAX_QUEUE_SIZE=${MAX_QUEUE_SIZE:-1000}
+      - MEMORY_WARNING_THRESHOLD=${MEMORY_WARNING_THRESHOLD:-0.75}
+      - MEMORY_CRITICAL_THRESHOLD=${MEMORY_CRITICAL_THRESHOLD:-0.90}
+      - HEALTH_CHECK_INTERVAL=${HEALTH_CHECK_INTERVAL:-60000}
+
+      # Monitoring
+      - ENABLE_METRICS=${ENABLE_METRICS:-true}
+      - ERROR_REPORTING=${ERROR_REPORTING:-true}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(0)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - affilitics-network
+
+networks:
+  affilitics-network:
+    driver: bridge
