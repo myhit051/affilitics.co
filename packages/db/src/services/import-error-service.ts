@@ -14,7 +14,7 @@ import {
   isRetryableError,
   getRetryStrategy,
   hasCriticalErrors
-} from '../constants/import-error-types'
+} from '../constants/import-error-types.js'
 
 export interface ImportErrorContext {
   jobId: string

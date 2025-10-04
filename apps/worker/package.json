@@ -4,8 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch index.js",
-    "start": "node index.js",
+    "dev": "node --watch enhanced-worker.js",
+    "start": "node enhanced-worker.js",
+    "legacy": "node index.js",
+    "test": "node test-services.js",
+    "test:integration": "node test-enhanced-worker.js",
     "build": "echo 'No build step required'",
     "lint": "echo 'No lint step configured'",
     "type-check": "echo 'No type-check step configured'"

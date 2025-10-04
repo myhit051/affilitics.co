@@ -152,7 +152,7 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
     
     // Security: CSP header for additional protection
-    const cspHeader = [
+    const cspHeaderSecondary = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Note: In production, remove unsafe-inline and unsafe-eval
       "style-src 'self' 'unsafe-inline'", // Note: In production, remove unsafe-inline
@@ -162,7 +162,7 @@ export async function middleware(request: NextRequest) {
       "frame-ancestors 'none'"
     ].join('; ')
     
-    response.headers.set('Content-Security-Policy', cspHeader)
+    response.headers.set('Content-Security-Policy', cspHeaderSecondary)
 
     // Create Supabase client for middleware
     const supabase = createMiddlewareClient(request, response)

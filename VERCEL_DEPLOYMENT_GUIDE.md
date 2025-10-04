@@ -5,7 +5,7 @@ This comprehensive guide covers deploying the Affilitics.co Next.js application 
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
-2. [Environment Variables Setup](#environment-variables-setup)
+2. [Environment Variabl es Setup](#environment-variables-setup)
 3. [Supabase Configuration](#supabase-configuration)
 4. [Database Setup](#database-setup)
 5. [Authentication Configuration](#authentication-configuration)
