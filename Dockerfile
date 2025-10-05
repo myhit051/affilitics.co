@@ -58,12 +58,11 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files
-COPY --from=builder /app/apps/web/next.config.mjs ./apps/web/
+COPY --from=builder /app/apps/web/next.config.js ./apps/web/
 COPY --from=builder /app/apps/web/package.json ./apps/web/
-COPY --from=builder /app/apps/web/public ./apps/web/public
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/packages/db/node_modules/.prisma ./packages/db/node_modules/.prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # Set correct permissions
 RUN chown -R nextjs:nodejs /app
