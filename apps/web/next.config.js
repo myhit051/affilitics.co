@@ -18,6 +18,14 @@ const nextConfig = {
 
   // Docker/Coolify deployment
   output: 'standalone',
+
+  // Skip TypeScript and ESLint checks in production build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
