@@ -62,7 +62,6 @@ COPY --from=builder /app/apps/web/next.config.js ./apps/web/
 COPY --from=builder /app/apps/web/package.json ./apps/web/
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # Set correct permissions
 RUN chown -R nextjs:nodejs /app
