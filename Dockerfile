@@ -50,8 +50,13 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 
-# Install OpenSSL and pnpm
-RUN apk add --no-cache openssl openssl-dev libc6-compat
+# Update package index and install dependencies separately
+RUN apk update && \
+    apk add --no-cache libc6-compat && \
+    apk add --no-cache openssl openssl-dev || \
+    apk add --no-cache openssl3 openssl3-dev
+
+# Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Add non-root user
@@ -79,8 +84,13 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Install OpenSSL and pnpm
-RUN apk add --no-cache openssl openssl-dev libc6-compat
+# Update package index and install dependencies separately
+RUN apk update && \
+    apk add --no-cache libc6-compat && \
+    apk add --no-cache openssl openssl-dev || \
+    apk add --no-cache openssl3 openssl3-dev
+
+# Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Add non-root user
