@@ -8,8 +8,8 @@ services:
       dockerfile: Dockerfile
       target: web-runner
     restart: unless-stopped
-    ports:
-      - "${PORT:-3000}:3000"
+    expose:
+      - "3000"
     environment:
       # Next.js
       - NODE_ENV=production
