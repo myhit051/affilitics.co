@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, getConfigForHealth, MetricsService } from '@affilitics/db';
+import { prisma, getConfigForHealth, MetricsService } from '@aff/db';
 
 // Component status type matching contract
 type ComponentStatus = {

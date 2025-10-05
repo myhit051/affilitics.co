@@ -5,8 +5,8 @@
  * providing real-time and historical performance insights.
  */
 
-import { MetricsService, type MetricsSnapshot, type TimeRange } from '@affilitics/db';
-import { ErrorTracker, type ErrorStats } from '@affilitics/db';
+import { MetricsService, type MetricsSnapshot, type TimeRange } from '@aff/db';
+import { ErrorTracker, type ErrorStats } from '@aff/db';
 
 // Dashboard metrics interfaces
 export interface DashboardMetrics {

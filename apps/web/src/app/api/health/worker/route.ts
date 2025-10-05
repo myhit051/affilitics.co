@@ -10,7 +10,7 @@ import {
   WorkerService, 
   SecurityService, 
   MetricsService 
-} from '@affilitics/db';
+} from '@aff/db';
 
 // Performance metrics type matching contract
 type PerformanceMetrics = {

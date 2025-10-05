@@ -10,7 +10,7 @@ import {
   SecurityService, 
   MetricsService,
   prisma 
-} from '@affilitics/db';
+} from '@aff/db';
 
 // Error report type matching contract
 type ErrorReport = {

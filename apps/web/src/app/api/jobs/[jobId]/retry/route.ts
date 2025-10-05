@@ -10,7 +10,7 @@ import {
   SecurityService, 
   MetricsService,
   ImportJobService
-} from '@affilitics/db';
+} from '@aff/db';
 
 // Job retry response type matching contract
 type JobRetryResponse = {
