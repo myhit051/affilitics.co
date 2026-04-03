@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@aff/db'
-import { startOfDay, subDays, format } from 'date-fns'
+import { startOfDay, subDays } from 'date-fns'
 import { withAuth } from '@/lib/auth/production-auth'
 
 export const dynamic = 'force-dynamic'

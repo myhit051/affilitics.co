@@ -12,8 +12,7 @@ import {
   QuickActions
 } from "@/components/analytics"
 import { RealTimeMetrics } from "@/components/analytics/real-time-metrics"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loading } from "@/components/ui/loading"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 export default function DashboardPage() {
   const { currentWorkspace, user, isLoading, isAuthenticated } = useWorkspace()

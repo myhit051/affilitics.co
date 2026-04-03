@@ -25,6 +25,7 @@
     "@supabase/supabase-js": "^2.45.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "@types/node": "^22.5.4",
     "prisma": "^5.18.0",
     "typescript": "^5.5.4"

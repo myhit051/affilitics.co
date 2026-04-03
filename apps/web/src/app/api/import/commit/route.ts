@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get and validate import job
-    const jobQuery = `
+    const _jobQuery = `
       SELECT 
         id, workspace_id, platform, filename, original_filename, 
         storage_path, size, status, hash, total_rows, valid_rows, error_count
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
 
     // If job has critical errors and not forcing, reject
     if (job.error_count > 0 && !forceProcess) {
-      const criticalErrorsQuery = `
+      const _criticalErrorsQuery = `
         SELECT COUNT(*) as critical_count
         FROM import_errors 
         WHERE job_id = $1 AND error_type IN ('missing', 'invalid_type')
@@ -293,7 +293,7 @@ export async function POST(req: NextRequest) {
 /**
  * Helper function to classify and handle different types of processing errors
  */
-function classifyProcessingError(error: Error, rowNumber: number = 0): {
+function classifyProcessingError(error: Error, _rowNumber: number = 0): {
   errorType: string
   message: string
   retryable: boolean

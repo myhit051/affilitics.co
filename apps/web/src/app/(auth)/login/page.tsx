@@ -29,7 +29,7 @@ export default function LoginPage() {
       <div className="space-y-4 pt-4 border-t border-slate-200">
         <div className="text-center">
           <p className="text-slate-600">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <a
               href="/register"
               className="font-semibold text-blue-600 hover:text-blue-500 transition-colors touch-manipulation"

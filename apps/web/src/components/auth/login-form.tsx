@@ -8,7 +8,6 @@ import { checkRateLimit, sanitizeAuthInput } from '@/lib/auth/client-utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 import * as React from 'react'
 

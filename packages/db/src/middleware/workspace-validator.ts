@@ -304,8 +304,7 @@ export class WorkspaceValidator {
           members: {
             where: { userId },
             select: {
-              role: true,
-              createdAt: true
+              role: true
             }
           }
         }
@@ -324,7 +323,7 @@ export class WorkspaceValidator {
         plan: result.plan,
         role: member.role,
         permissions,
-        memberSince: member.createdAt
+        memberSince: new Date() // TODO: Add createdAt back when Member model includes it
       };
     } catch (error) {
       console.error('Failed to get workspace details:', error);
@@ -567,5 +566,4 @@ export const requireAdmin = WorkspaceValidator.requireAdmin;
 export const requireOwner = WorkspaceValidator.requireOwner;
 export const publicRoute = WorkspaceValidator.public;
 
-// Export types
-export type { WorkspaceValidationRequest, WorkspaceValidationOptions, ValidationResult };
+// Types already exported above at interface declarations

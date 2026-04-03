@@ -3,9 +3,8 @@
  * Supports large file processing, platform auto-detection, and comprehensive validation
  */
 
-import { Readable, Transform } from 'stream'
-import { pipeline } from 'stream/promises'
-import Papa, { ParseResult, ParseError } from 'papaparse'
+import { Readable } from 'stream'
+import Papa, { ParseResult } from 'papaparse'
 // import { CSV_VALIDATION_CONFIG, PLATFORM_VALIDATION_CONFIG, getEffectiveConfig } from '@aff/db'
 // Mock for build purposes
 const getEffectiveConfig = () => ({
@@ -265,7 +264,7 @@ export class CSVValidator {
     const errors: ValidationError[] = []
     const warnings: ValidationError[] = []
     const data: Record<string, any>[] = []
-    let headers: string[] = []
+    const headers: string[] = []
     let rowCount = 0
     let validRowCount = 0
     const duplicateKeys = new Set<string>()

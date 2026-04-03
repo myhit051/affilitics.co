@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Activity, Users, DollarSign, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 interface RealTimeMetric {

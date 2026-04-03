@@ -11,7 +11,7 @@ import React, { ComponentType, ReactNode, useEffect, useState, useMemo } from 'r
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth/auth-provider'
 import { AuthUser } from '@/lib/supabase/types'
-import { validateWorkspaceAccess, hasPermission } from '@/lib/auth/workspace-middleware'
+import { hasPermission } from '@/lib/auth/workspace-middleware'
 
 // Types for authentication wrapper configurations
 export interface AuthWrapperOptions {

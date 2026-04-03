@@ -10,7 +10,7 @@
  * - Multi-factor authentication support
  */
 
-import { jwtVerify, SignJWT, importJWK, KeyLike } from 'jose';
+import { jwtVerify, SignJWT, KeyLike } from 'jose';
 import { cookies } from 'next/headers';
 import { SecurityService } from '../../../../packages/db/src/services/security-service';
 

@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, getConfigForHealth, MetricsService } from '@aff/db';
+import { prisma, MetricsService } from '@aff/db';
 
 // Component status type matching contract
 type ComponentStatus = {
@@ -27,7 +27,7 @@ type HealthResponse = {
   };
 };
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
   
   try {
@@ -122,7 +122,7 @@ async function checkDatabaseHealth(): Promise<ComponentStatus> {
     await prisma.$queryRaw`SELECT 1`;
     
     // Test more complex query to ensure database is working properly
-    const testResult = await prisma.$queryRaw<any[]>`
+    const _testResult = await prisma.$queryRaw<any[]>`
       SELECT 
         COUNT(*) as total_workspaces,
         (SELECT COUNT(*) FROM "ImportJob" WHERE "createdAt" >= NOW() - INTERVAL '24 hours') as recent_jobs

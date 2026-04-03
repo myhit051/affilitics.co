@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { ACTIVE_STATUSES, IMPORT_JOB_STATUS, isActiveStatus } from '@aff/db'
+import { IMPORT_JOB_STATUS, isActiveStatus } from '@aff/db'
 import { useWorkspaceAPI } from '@/hooks/use-workspace'
 
 interface ImportJobStatus {

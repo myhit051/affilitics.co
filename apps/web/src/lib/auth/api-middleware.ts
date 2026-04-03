@@ -5,10 +5,10 @@
  * with authentication, authorization, rate limiting, and comprehensive logging.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { verifyCSRFEnhanced } from '@/lib/security/csrf'
-import { validateWorkspaceAccess, ValidatedWorkspaceContext } from '@/lib/auth/workspace-middleware'
+import { validateWorkspaceAccess } from '@/lib/auth/workspace-middleware'
 import { User } from '@supabase/supabase-js'
 
 // Types for middleware configuration
@@ -271,7 +271,7 @@ export function withApiProtection<T extends any[]>(
   return async (request: NextRequest, ...args: T): Promise<Response> => {
     const startTime = Date.now()
     const requestId = generateRequestId()
-    let context: Partial<ApiContext> = { request }
+    const context: Partial<ApiContext> = { request }
 
     try {
       // Method validation

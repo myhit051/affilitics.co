@@ -12,8 +12,7 @@ const getEffectiveConfig = () => ({
     PLATFORM_DETECTION_CONFIDENCE_THRESHOLD: 0.8
   }
 })
-import { getPlatformConfig, getSupportedPlatforms } from './platform-configs'
-import type { PlatformCSVConfig } from './csv-validator'
+import { getSupportedPlatforms } from './platform-configs'
 
 export interface PlatformDetectionResult {
   detectedPlatform: string | null

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { getAuthContext } from '@/lib/auth'
 import { prisma } from '@aff/db'
-import { createImportErrorService, ERROR_SEVERITY, ERROR_CATEGORY, getErrorConfig } from '@aff/db'
+import { createImportErrorService } from '@aff/db'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     sinceDate.setDate(sinceDate.getDate() - days)
 
     // Base query conditions
-    const baseConditions = {
+    const _baseConditions = {
       workspace: workspaceId,
       since: sinceDate,
       platform,
@@ -326,7 +326,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const { workspaceId } = await getAuthContext()
+    const { workspaceId: _workspaceId } = await getAuthContext()
     const body = await req.json()
     const { 
       format = 'json', // 'json', 'csv', 'pdf'

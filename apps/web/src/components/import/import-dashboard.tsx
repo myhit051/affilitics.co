@@ -8,7 +8,6 @@ import {
   FileText,
   AlertTriangle,
   CheckCircle,
-  Settings,
   RefreshCw,
   Clock,
   TrendingUp,

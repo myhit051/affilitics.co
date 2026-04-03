@@ -70,7 +70,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     let errorReport: ErrorReport;
     try {
       errorReport = await request.json();
-    } catch (parseError) {
+    } catch (_parseError) {
       await recordMetrics('POST', '/api/errors/report', 400, Date.now() - startTime);
       return createErrorResponse(
         'INVALID_JSON',

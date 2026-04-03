@@ -146,7 +146,7 @@ export const POST = withWorkspaceValidation(
 )
 
 export const GET = withWorkspaceValidation(
-  async (req: NextRequest, context) => {
+  async (_req: NextRequest, _context) => {
     try {
       // Return supported platforms and detection configuration
       const supportedPlatforms = getSupportedPlatforms()

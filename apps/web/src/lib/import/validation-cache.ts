@@ -15,7 +15,7 @@ const getEffectiveConfig = () => ({
     ENABLE_CSV_VALIDATION_CACHE: true
   }
 })
-import type { ParsedCSVData, ValidationContext, StreamingValidationOptions } from './csv-validator'
+import type { ParsedCSVData, StreamingValidationOptions } from './csv-validator'
 
 export interface CacheEntry<T = any> {
   key: string

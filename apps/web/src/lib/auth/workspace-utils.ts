@@ -10,9 +10,7 @@ import { createClient as createClientClient } from '@/lib/supabase/client'
 import { 
   Workspace, 
   WorkspaceMember, 
-  WorkspaceRole, 
-  AuthUser,
-  Permission,
+  WorkspaceRole,
   ValidationResult,
   ServiceResponse 
 } from './types'

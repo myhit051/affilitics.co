@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Processing statistics are not available in current schema
-    let processingStats = null
+    const processingStats = null
 
     const response = {
       success: true,

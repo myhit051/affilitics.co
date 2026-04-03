@@ -3,8 +3,7 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { useWorkspaceAPI } from "@/hooks/use-workspace"
-import { 
-  Eye,
+import {
   Download,
   FileText,
   AlertTriangle,
@@ -14,8 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Copy,
-  ExternalLink
+  Copy
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

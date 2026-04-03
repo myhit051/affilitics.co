@@ -3,15 +3,11 @@ import { getAuthContext } from '@/lib/auth'
 import { prisma } from '@aff/db'
 import { createImportErrorService } from '@aff/db'
 import { 
-  IMPORT_JOB_STATUS, 
-  isValidStatusTransition,
+  IMPORT_JOB_STATUS,
   validateStatusTransition 
 } from '@aff/db'
-import { 
-  IMPORT_ERROR_TYPES, 
-  isRetryableError,
-  getRetryStrategy 
-} from '@aff/db'
+
+
 import { verifyCSRFEnhanced, CSRFError, logCSRFEvent } from '@/lib/security/csrf'
 
 export const runtime = 'nodejs'
@@ -158,8 +154,8 @@ export async function POST(req: NextRequest) {
 
     // Determine retry feasibility
     let retryFeasible = true
-    let retryReasons: string[] = []
-    let warnings: string[] = []
+    const retryReasons: string[] = []
+    const warnings: string[] = []
 
     if (hasBlockingErrors && !skipErrors && retryStrategy !== 'force') {
       retryFeasible = false

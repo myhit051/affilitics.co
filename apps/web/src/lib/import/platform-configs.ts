@@ -30,8 +30,7 @@ const getEffectiveConfig = () => ({
     }
   }
 })
-import type { PlatformCSVConfig, CSVValidationRule, BusinessRule } from './csv-validator'
-import { getBusinessRulesForField } from './business-rules'
+import type { PlatformCSVConfig, CSVValidationRule } from './csv-validator'
 
 /**
  * Shopee affiliate CSV format configuration

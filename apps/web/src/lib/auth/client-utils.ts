@@ -1,5 +1,4 @@
 // Client-side auth utilities that don't depend on server-only APIs
-import jwt from 'jsonwebtoken'
 
 export class AuthSecurityError extends Error {
   constructor(message: string, public code: string, public statusCode: number = 401) {

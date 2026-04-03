@@ -14,7 +14,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { WorkspaceMember } from '@/lib/supabase/types'
 
 // Security: Define workspace roles with explicit permissions
 export const WORKSPACE_ROLES = {
