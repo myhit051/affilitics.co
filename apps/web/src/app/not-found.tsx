@@ -29,16 +29,8 @@ export default function NotFoundPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-2">
-            <Button asChild className="w-full">
-              <Link href="/">
-                Go to homepage
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/workspaces">
-                View workspaces
-              </Link>
-            </Button>
+            <Button asChild className="w-full"><Link href="/">Go to homepage</Link></Button>
+            <Button asChild variant="outline" className="w-full"><Link href="/workspaces">View workspaces</Link></Button>
           </div>
         </CardContent>
       </Card>

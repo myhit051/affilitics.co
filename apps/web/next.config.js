@@ -2,7 +2,7 @@
 const nextConfig = {
   transpilePackages: ['@aff/db'],
   experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', '@supabase/supabase-js']
+    serverComponentsExternalPackages: ['@libsql/client', 'drizzle-orm', '@supabase/supabase-js']
   },
 
   // Performance optimizations
@@ -15,9 +15,6 @@ const nextConfig = {
     domains: [],
     formats: ['image/webp', 'image/avif'],
   },
-
-  // Docker/Coolify deployment
-  output: 'standalone',
 
   // Skip TypeScript and ESLint checks in production build
   typescript: {

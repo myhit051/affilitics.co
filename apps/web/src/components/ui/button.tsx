@@ -96,8 +96,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       }
     }
     
+    if (asChild) {
+      return (
+        <Slot
+          className={cn(buttonVariants({ variant, size: adjustedSize, className }))}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </Slot>
+      )
+    }
+
     return (
-      <Comp
+      <button
         className={cn(buttonVariants({ variant, size: adjustedSize, className }))}
         ref={ref}
         disabled={disabled || loading}
@@ -107,7 +119,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
         )}
         {children}
-      </Comp>
+      </button>
     )
   }
 )

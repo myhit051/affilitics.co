@@ -144,25 +144,7 @@ export async function middleware(request: NextRequest) {
       })
     }
 
-    // Security: Add security headers to all responses
-    response.headers.set('X-Frame-Options', 'DENY')
-    response.headers.set('X-Content-Type-Options', 'nosniff')
-    response.headers.set('X-XSS-Protection', '1; mode=block')
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-    
-    // Security: CSP header for additional protection
-    const cspHeaderSecondary = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Note: In production, remove unsafe-inline and unsafe-eval
-      "style-src 'self' 'unsafe-inline'", // Note: In production, remove unsafe-inline
-      "img-src 'self' data: https:",
-      "font-src 'self'",
-      "connect-src 'self' https://*.supabase.co",
-      "frame-ancestors 'none'"
-    ].join('; ')
-    
-    response.headers.set('Content-Security-Policy', cspHeaderSecondary)
+
 
     // Create Supabase client for middleware
     const supabase = createMiddlewareClient(request, response)
